@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThatDev — Game Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080b0f;
+    --bg2: #0d1117;
+    --surface: #111720;
+    --border: #1e2d40;
+    --accent: #00e5ff;
+    --accent2: #ff3c6e;
+    --text: #c8d6e5;
+    --muted: #4a5d73;
+    --glow: 0 0 20px rgba(0,229,255,0.25);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; }
+  .cursor-dot {
+    width: 6px; height: 6px;
+    background: var(--accent); border-radius: 50%;
+    position: absolute; transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .cursor-ring {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(0,229,255,0.5); border-radius: 50%;
+    position: absolute; transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+    pointer-events: none;
+  }
+
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .wrapper { position: relative; z-index: 1; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 20px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(30,45,64,0.5);
+    background: rgba(8,11,15,0.85);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; letter-spacing: 3px;
+    color: var(--accent); text-shadow: var(--glow);
+  }
+  .nav-logo span { color: var(--accent2); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem; color: var(--muted);
+    text-decoration: none; letter-spacing: 2px; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO — full viewport, centered */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 80px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(0,229,255,0.07) 0%, transparent 65%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: pulse-glow 4s ease-in-out infinite alternate;
+  }
+  .hero-glow2 {
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(255,60,110,0.05) 0%, transparent 65%);
+    top: 30%; right: 10%;
+    pointer-events: none;
+    animation: pulse-glow 5s ease-in-out 1s infinite alternate;
+  }
+
+  @keyframes pulse-glow {
+    from { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  .hero-content { position: relative; max-width: 900px; }
+
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem; color: var(--accent);
+    letter-spacing: 5px; text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero-tag::before { content: '> '; color: var(--accent2); }
+
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(6rem, 18vw, 14rem);
+    line-height: 0.85;
+    letter-spacing: 6px;
+    opacity: 0; animation: fadeUp 0.8s 0.35s forwards;
+  }
+  .hero-name .that { color: var(--accent); text-shadow: var(--glow); }
+  .hero-name .dev { color: #fff; }
+
+  .hero-divider {
+    width: 120px; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    margin: 36px auto;
+    opacity: 0; animation: fadeUp 0.6s 0.5s forwards;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem; color: var(--muted);
+    letter-spacing: 1px; line-height: 1.7;
+    max-width: 520px; margin: 0 auto 48px;
+    opacity: 0; animation: fadeUp 0.7s 0.6s forwards;
+  }
+
+  .hero-cta {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 0.7s 0.75s forwards;
+  }
+
+  .btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase;
+    text-decoration: none; padding: 14px 32px;
+    border: 1px solid var(--accent); color: var(--accent);
+    background: transparent; cursor: none;
+    transition: all 0.25s; position: relative; overflow: hidden;
+  }
+  .btn::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--accent); transform: translateX(-101%); transition: transform 0.25s;
+  }
+  .btn:hover { color: var(--bg); }
+  .btn:hover::before { transform: translateX(0); }
+  .btn span { position: relative; z-index: 1; }
+  .btn-ghost { border-color: var(--border); color: var(--muted); }
+  .btn-ghost::before { background: var(--surface); }
+  .btn-ghost:hover { color: var(--text); }
+
+  /* Terminal block */
+  .terminal {
+    margin: 80px auto 0;
+    max-width: 520px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    opacity: 0; animation: fadeUp 0.7s 0.9s forwards;
+    text-align: left;
+  }
+  .terminal-bar {
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    padding: 10px 16px; display: flex; gap: 8px; align-items: center;
+  }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .t-dot:nth-child(1) { background: #ff5f57; }
+  .t-dot:nth-child(2) { background: #ffbd2e; }
+  .t-dot:nth-child(3) { background: #28ca41; }
+  .terminal-body { padding: 20px 24px; }
+  .t-line {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem; line-height: 2;
+    color: var(--muted);
+  }
+  .t-line .prompt { color: var(--accent2); }
+  .t-line .cmd { color: var(--text); }
+  .t-line .out { color: var(--accent); }
+  .t-line .cursor-blink {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--accent);
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* ABOUT section */
+  .about-wrap {
+    max-width: 900px; margin: 0 auto;
+    padding: 100px 48px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  }
+  .about-left .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem; color: var(--accent2);
+    letter-spacing: 4px; text-transform: uppercase; margin-bottom: 12px;
+  }
+  .about-left .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    letter-spacing: 3px; color: #fff; line-height: 1; margin-bottom: 24px;
+  }
+  .about-left p {
+    color: var(--text); line-height: 1.8; font-size: 1.05rem; margin-bottom: 16px;
+  }
+
+  .skills-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skill-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 2px;
+    border: 1px solid var(--border); color: var(--muted);
+    padding: 6px 14px; text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .skill-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* CONTACT */
+  .contact-section {
+    padding: 80px 48px 120px; text-align: center;
+  }
+  .contact-inner { max-width: 700px; margin: 0 auto; }
+  .contact-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    letter-spacing: 4px; color: #fff; line-height: 1; margin-bottom: 20px;
+  }
+  .contact-title span { color: var(--accent); text-shadow: var(--glow); }
+  .contact-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem; color: var(--muted);
+    letter-spacing: 2px; margin-bottom: 48px;
+  }
+  .social-links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .social-link {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); padding: 12px 24px;
+    transition: all 0.25s; cursor: none;
+  }
+  .social-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  footer {
+    border-top: 1px solid var(--border); padding: 24px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem; color: var(--muted); letter-spacing: 2px;
+  }
+  .footer-itch {
+    font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
+    color: var(--accent2); text-decoration: none; letter-spacing: 2px;
+    transition: opacity 0.2s;
+  }
+  .footer-itch:hover { opacity: 0.7; }
+
+  .divider {
+    max-width: 900px; margin: 0 auto; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 80px 24px 60px; }
+    .about-wrap { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px; }
+    .contact-section { padding: 60px 24px 80px; }
+    footer { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor">
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+</div>
+<div class="grid-bg"></div>
+
+<div class="wrapper">
+
+  <nav>
+    <div class="nav-logo">That<span>Dev</span></div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+    <div class="hero-content">
+      <div class="hero-tag">indie game developer</div>
+      <div class="hero-name">
+        <div class="that">That</div>
+        <div class="dev">Dev</div>
+      </div>
+      <div class="hero-divider"></div>
+      <p class="hero-sub">
+        Building worlds, mechanics & experiences — one game at a time. Early in the journey. All in on the craft.
+      </p>
+      <div class="hero-cta">
+        <a href="https://thatdev.itch.io" class="btn"><span>Visit itch.io</span></a>
+        <a href="#about" class="btn btn-ghost"><span>About me</span></a>
+      </div>
+
+      <!-- Terminal easter egg -->
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>
+        </div>
+        <div class="terminal-body">
+          <div class="t-line"><span class="prompt">~/thatdev $</span> <span class="cmd">whoami</span></div>
+          <div class="t-line"><span class="out">indie game dev // just getting started</span></div>
+          <div class="t-line"><span class="prompt">~/thatdev $</span> <span class="cmd">cat status.txt</span></div>
+          <div class="t-line"><span class="out">currently: building something new</span></div>
+          <div class="t-line"><span class="prompt">~/thatdev $</span> <span class="cursor-blink"></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <div id="about">
+    <div class="about-wrap">
+      <div class="about-left">
+        <div class="section-label">// who am i</div>
+        <div class="section-title">About Me</div>
+        <p>Hey — I'm ThatDev, an indie game developer just getting started. Passionate about building games that feel good to play, with tight mechanics and atmosphere that lingers.</p>
+        <p>Currently learning, experimenting, and shipping. Every project teaches me something new. Follow along as I grow.</p>
+      </div>
+      <div>
+        <div class="section-label" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--accent2);letter-spacing:4px;text-transform:uppercase;margin-bottom:20px;">// tools & skills</div>
+        <div class="skills-grid">
+          <div class="skill-tag">Game Design</div>
+          <div class="skill-tag">Unity</div>
+          <div class="skill-tag">Godot</div>
+          <div class="skill-tag">Pixel Art</div>
+          <div class="skill-tag">Level Design</div>
+          <div class="skill-tag">Game Jam</div>
+          <div class="skill-tag">Itch.io</div>
+          <div class="skill-tag">Solo Dev</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact-section">
+    <div class="contact-inner">
+      <div class="contact-title">Find Me <span>Online</span></div>
+      <p class="contact-sub">// add your links below</p>
+      <div class="social-links">
+        <a href="https://thatdev.itch.io" class="social-link">itch.io</a>
+        <a href="#" class="social-link">twitter / x</a>
+        <a href="#" class="social-link">discord</a>
+        <a href="#" class="social-link">github</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-copy">© 2025 ThatDev — All rights reserved</div>
+    <a href="https://thatdev.itch.io" class="footer-itch">thatdev.itch.io ↗</a>
+  </footer>
+
+</div>
+
+<script>
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+  });
+
+  (function animateRing() {
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  })();
+
+  document.querySelectorAll('a, button, .skill-tag').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '50px'; ring.style.height = '50px';
+      ring.style.borderColor = 'rgba(255,60,110,0.6)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '32px'; ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(0,229,255,0.5)';
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.skill-tag, .about-left p').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
