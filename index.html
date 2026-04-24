@@ -32,19 +32,6 @@
     cursor: none;
   }
 
-  .cursor { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; }
-  .cursor-dot {
-    width: 6px; height: 6px;
-    background: var(--accent); border-radius: 50%;
-    position: absolute; transform: translate(-50%, -50%);
-    box-shadow: 0 0 8px var(--accent);
-  }
-  .cursor-ring {
-    width: 32px; height: 32px;
-    border: 1px solid rgba(0,229,255,0.5); border-radius: 50%;
-    position: absolute; transform: translate(-50%, -50%);
-    transition: all 0.15s ease;
-  }
 
   body::before {
     content: '';
@@ -206,15 +193,7 @@
   .t-line .prompt { color: var(--accent2); }
   .t-line .cmd { color: var(--text); }
   .t-line .out { color: var(--accent); }
-  .t-line .cursor-blink {
-    display: inline-block;
-    width: 8px; height: 14px;
-    background: var(--accent);
-    animation: blink 1s step-end infinite;
-    vertical-align: text-bottom;
-    margin-left: 2px;
-  }
-  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
 
   /* ABOUT section */
   .about-wrap {
