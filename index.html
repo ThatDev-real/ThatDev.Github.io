@@ -340,7 +340,7 @@
         Building worlds, mechanics & experiences — one game at a time. Early in the journey. All in on the craft.
       </p>
       <div class="hero-cta">
-        <a href="https://thatdev.itch.io" class="btn"><span>Visit itch.io</span></a>
+        <a href="https://thatdev-real.itch.io" class="btn"><span>Visit itch.io</span></a>
         <a href="#about" class="btn btn-ghost"><span>About me</span></a>
       </div>
 
@@ -372,14 +372,14 @@
       <div>
         <div class="section-label" style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--accent2);letter-spacing:4px;text-transform:uppercase;margin-bottom:20px;">// tools & skills</div>
         <div class="skills-grid">
-          <div class="skill-tag">Game Design</div>
           <div class="skill-tag">Unity</div>
+          <div class="skill-tag">Unreal</div>
           <div class="skill-tag">Godot</div>
           <div class="skill-tag">Pixel Art</div>
-          <div class="skill-tag">Level Design</div>
+          <div class="skill-tag">Gameplay design</div>
           <div class="skill-tag">Game Jam</div>
           <div class="skill-tag">Itch.io</div>
-          <div class="skill-tag">Solo Dev</div>
+          <div class="skill-tag">Indie Dev / AA studio game dev</div>
         </div>
       </div>
     </div>
@@ -391,66 +391,22 @@
   <section id="contact" class="contact-section">
     <div class="contact-inner">
       <div class="contact-title">Find Me <span>Online</span></div>
-      <p class="contact-sub">// add your links below</p>
+      <p class="contact-sub">// All links below</p>
       <div class="social-links">
-        <a href="https://thatdev.itch.io" class="social-link">itch.io</a>
-        <a href="#" class="social-link">twitter / x</a>
-        <a href="#" class="social-link">discord</a>
-        <a href="#" class="social-link">github</a>
+        <a href="https://thatdev-real.itch.io" class="social-link">itch.io</a>
+        <a href="https://x.com/ThatDev_real" class="social-link">twitter / x</a>
+        <a href="mailto:thatdev.real@gmail.com" class="social-link">email</a>
+        <a href="https://github.com/ThatDev-real" class="social-link">github</a>
       </div>
     </div>
   </section>
 
   <footer>
     <div class="footer-copy">© 2025 ThatDev — All rights reserved</div>
-    <a href="https://thatdev.itch.io" class="footer-itch">thatdev.itch.io ↗</a>
+    <a href="https://thatdev-real.itch.io" class="footer-itch">thatdev.itch.io ↗</a>
   </footer>
 
 </div>
 
-<script>
-  const dot = document.getElementById('cursorDot');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
-  });
-
-  (function animateRing() {
-    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-    requestAnimationFrame(animateRing);
-  })();
-
-  document.querySelectorAll('a, button, .skill-tag').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      ring.style.width = '50px'; ring.style.height = '50px';
-      ring.style.borderColor = 'rgba(255,60,110,0.6)';
-    });
-    el.addEventListener('mouseleave', () => {
-      ring.style.width = '32px'; ring.style.height = '32px';
-      ring.style.borderColor = 'rgba(0,229,255,0.5)';
-    });
-  });
-
-  // Scroll reveal
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }
-    });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll('.skill-tag, .about-left p').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(16px)';
-    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-    observer.observe(el);
-  });
-</script>
 </body>
 </html>
